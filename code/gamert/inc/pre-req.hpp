@@ -51,4 +51,26 @@
 #define GRT_SAFE_DELETE(ptr)		if(ptr) { delete ptr; ptr = nullptr; }
 #define GRT_SAFE_DELETE_ARRAY(ptr)	if(ptr) { delete[] ptr; ptr = nullptr; }
 
+#if defined(DEBUG) || defined(_DEBUG)
+#	define	GRT_LUA_STACKCHECK_BEGIN(lua_state)	\
+				int _grt_lua_stackcheck_tops = lua_gettop(lua_state)
+#	define	GRT_LUA_STACKCHECK_END(lua_state)	\
+				GRT_CHECK(	\
+					_grt_lua_stackcheck_tops == lua_gettop(lua_state),	\
+					"lua stack is unbalanced")
+#else
+#	define	GRT_LUA_STACKCHECK_BEGIN(lua_state)	(void)
+#	define	GRT_LUA_STACKCHECK_END(lua_state) (void)
+#endif
+
+#if defined(DEBUG) || defined(_DEBUG)
+#	define GRT_LUA_CHECK(lua_state, expression)	\
+			if((expression)) { \
+				const char* msg = lua_tostring(lua_state, -1);	\
+				throw std::runtime_error(msg); }
+#else
+#	define GRT_LUA_CHECK (void)
+#endif
+
+
 

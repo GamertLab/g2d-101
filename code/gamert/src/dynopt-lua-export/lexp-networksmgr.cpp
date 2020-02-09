@@ -5,6 +5,8 @@ EXPORT_LUABINDING(lexp::LExp_NetworksMgr, LExp_NetworksMgr);
 
 void lexp::LExp_NetworksMgr::on_register(lua_State* L)
 {
+	GRT_LUA_STACKCHECK_BEGIN(L);
+
 	lua_getglobal(L, "gamert");
 
 	// networksmgr - create a lua object
@@ -25,6 +27,8 @@ void lexp::LExp_NetworksMgr::on_register(lua_State* L)
 	lua_setfield(L, -2, "networksmgr");
 
 	lua_pop(L, -1);
+	
+	GRT_LUA_STACKCHECK_END(L);
 }
 
 int lexp::LExp_NetworksMgr::_luafunc_startup(lua_State* L)

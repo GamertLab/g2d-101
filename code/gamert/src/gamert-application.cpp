@@ -17,8 +17,6 @@ void GamertApplication::init()
 	// load configuration
 	ConfigMgr::get_instance().load_config();
 
-	// start lua runtime
-	luart::init_runtime();
 
 	// init vk layer
 	this->on_init_vklayer();
@@ -33,8 +31,10 @@ void GamertApplication::init()
 
 
 
-	// call customized initialization process via dynopt
-	luart::run_script("scripts/root-app-init.lua");
+	// start lua runtime
+	luart::init_runtime();
+
+	luart::game::app_init();
 }
 
 void GamertApplication::uninit()

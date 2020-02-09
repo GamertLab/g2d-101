@@ -4,9 +4,19 @@
 #include "singleton.hpp"
 #include "lua.hpp"
 
+
 // lua run-time
 namespace luart
 {
+
+	/* ************************************************************************
+	 * game - a lua object
+	 * ***********************************************************************/
+	namespace game
+	{
+		void app_init();
+		void app_uninit();
+	}
 
 	/* ************************************************************************
 	 * functions
@@ -14,7 +24,6 @@ namespace luart
 
 	void init_runtime();
 	void uninit_runtime();
-	void run_script(const std::string& filename);
 
 	/* ************************************************************************
 	 * variables
@@ -23,12 +32,14 @@ namespace luart
 	extern lua_State*		global_state;
 
 
+	/* ************************************************************************
+	 * internal implementations
+	 * ***********************************************************************/
 	namespace _internal
 	{
-		extern std::unordered_set<std::string>	loaded_files;
-
 		void config_lua_package();
 		void boot();
+		void load_requires();
 	}
 }
 

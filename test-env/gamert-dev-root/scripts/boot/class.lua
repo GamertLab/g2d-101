@@ -2,7 +2,6 @@ BtClass = function(ctor)
     local prototype = {}
     prototype.__index = prototype
     prototype.ctor = ctor
-    prototype.super = nil
 
     setmetatable(prototype, {
         __call = function(...)
@@ -19,14 +18,4 @@ BtClass = function(ctor)
     return prototype
 end
 
-BtClassFrom = function(base, ctor)
-    local prototype = BtClass(ctor)
-
-    for key, value in pairs(base) do
-        prototype[key] = value
-    end
-
-    prototype.super = base
-    return prototype
-end
 

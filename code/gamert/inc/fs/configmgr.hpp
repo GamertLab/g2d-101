@@ -4,6 +4,7 @@
 #include "singleton.hpp"
 #include "config-master.hpp"
 #include "config-networks.hpp"
+#include "config-dynopt.hpp"
 
 class ConfigMgr : public Singleton<ConfigMgr>
 {
@@ -21,6 +22,11 @@ private:
 	void _load_cfg_networks(const std::string& configpath);
 	void _load_cfg_networks_constants(const void* xnetworkscfg);
 	void _load_cfg_networks_connections(const void* xnetworkscfg);
+
+	// parse and load dynopt config
+	void _load_cfg_dynopt(const std::string& configpath);
+	void _load_cfg_dynopt_luart(const void* xluart);
+	void _load_cfg_dynopt_luart_requirelist(const void* xrequirelist);
 
 private:
 	static int32_t _parse_int32_attr(

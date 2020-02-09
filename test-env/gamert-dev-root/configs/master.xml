@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <MasterConfig>
 	<MinGameFrameInterval Value="16.f"/>
 	<SubConfigs>
 		<Config Name="Networks" File="configs/networks.xml"/>
+		<Config Name="Dynopt" File="configs/dynopt.xml"/>
 	</SubConfigs>
 </MasterConfig>

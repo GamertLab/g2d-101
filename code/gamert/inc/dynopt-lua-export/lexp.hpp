@@ -45,5 +45,6 @@ namespace lexp
 #define LUA_REPORT_ERROR(L, msg) \
 			lua_pushliteral(L, __FILE__ ": " __FUNCTION__ ": " msg); lua_error(L)
 
+	const char* _LEXP_FIELD_NATIVE_OBJ	= "_luart_fd_native_obj";
 }
 

@@ -15,9 +15,17 @@ void ConfigMgr::load_config()
 {
 	_load_cfg_master();
 
-	const auto& configpath = ConfigMaster::subconfigs.find("Networks");
-	GRT_CHECK(configpath != ConfigMaster::subconfigs.end(), "networks config not found")
-	_load_cfg_networks(configpath->second);
+#define LOAD_SUBCONFIG(name, load_func)		\
+	{	\
+		const auto& configpath = ConfigMaster::subconfigs.find(name);		\
+		GRT_CHECK(configpath != ConfigMaster::subconfigs.end(), name " config not found!")	\
+		load_func(configpath->second);		\
+	}
+	
+	LOAD_SUBCONFIG("Networks", _load_cfg_networks);
+	LOAD_SUBCONFIG("Dynopt", _load_cfg_dynopt);
+
+#undef	LOAD_SUBCONFIG
 
 }
 
@@ -205,4 +213,77 @@ int32_t ConfigMgr::_parse_int32_attr(
 
 	return res;
 }
+
+void ConfigMgr::_load_cfg_dynopt(const std::string& configpath)
+{
+	try
+	{
+		tinyxml2::XMLDocument xdoc;
+		xdoc.LoadFile(
+			ResMgrStatic::get_instance()
+			.fullpath(configpath)
+			.c_str());
+
+		const auto& xdynopt = xdoc.RootElement();
+
+		if (GRT_IS_STRING_EQUAL(
+			xdynopt->Name(),
+			"DynoptConfig"))
+		{
+			const auto& xluart = xdynopt->LastChildElement("LuaRT");
+			if (xluart)
+			{
+				_load_cfg_dynopt_luart(xluart);
+			}
+
+		}
+		else
+		{
+			throw std::runtime_error(
+				"unknown file format.");
+		}
+	}
+	catch (std::exception ex)
+	{
+		// TODO: handle exceptions
+		throw ex;
+	}
+}
+
+void ConfigMgr::_load_cfg_dynopt_luart(const void* xluart)
+{
+	const tinyxml2::XMLElement& xlua = *((const tinyxml2::XMLElement*)xluart);
+
+	const auto& xreqlist = xlua.LastChildElement("RequireList");
+	if (xreqlist)
+	{
+		_load_cfg_dynopt_luart_requirelist(xreqlist);
+	}
+}
+
+void ConfigMgr::_load_cfg_dynopt_luart_requirelist(const void* xrequirelist)
+{
+	const tinyxml2::XMLElement& xlist = *((const tinyxml2::XMLElement*) xrequirelist);
+
+	auto xitem = xlist.FirstChildElement();
+	while (xitem)
+	{
+		if (GRT_IS_STRING_EQUAL(
+			xitem->Name(),
+			"Require"))
+		{
+			const char* rname = xitem->GetText();
+			if (rname)
+			{
+				ConfigDynopt::luart::require_list.push_back(rname);
+			}
+		}
+
+		xitem = xitem->NextSiblingElement();
+	}
+
+}
+
+
+
 
