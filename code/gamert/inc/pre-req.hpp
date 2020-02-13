@@ -58,9 +58,14 @@
 				GRT_CHECK(	\
 					_grt_lua_stackcheck_tops == lua_gettop(lua_state),	\
 					"lua stack is unbalanced")
+#	define	GRT_LUA_STACKCHECK_END_OFFSET(lua_state, offset)	\
+				GRT_CHECK(	\
+					(_grt_lua_stackcheck_tops + offset) == lua_gettop(lua_state),	\
+					"lua stack is unbalanced")
 #else
 #	define	GRT_LUA_STACKCHECK_BEGIN(lua_state)	(void)
 #	define	GRT_LUA_STACKCHECK_END(lua_state) (void)
+#	define	GRT_LUA_STACKCHECK_END_OFFSET(lua_state, offset) (void)
 #endif
 
 #if defined(DEBUG) || defined(_DEBUG)

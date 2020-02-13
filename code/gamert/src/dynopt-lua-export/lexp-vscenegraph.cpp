@@ -8,39 +8,25 @@ void lexp::LExp_VSceneGraph::on_register(lua_State* L)
 	GRT_LUA_STACKCHECK_BEGIN(L);
 
 	lua_getglobal(L, "gamert");
-	lua_getglobal(L, "BtClass");				// get the func BtClass() to call
-
-	lua_pushcfunction(L, LExp_VSceneGraph::_luafunc_ctor);	// param: ctor
-	GRT_LUA_CHECK(L, lua_pcall(L, 1, 1, 0));	// call BtClass(ctor)
+	LuaClassesMgr::register_lua_class(
+		typeid(LExp_VSceneGraph),
+		LExp_VSceneGraph::_lexp_class_ctor,
+		LExp_VSceneGraph::_lexp_class_gc,
+		L);
 
 	lua_setfield(L, -2, "VSceneGraph");			// set gamert["VSceneGraph"]
-
-	lua_pop(L, 1);		// gamert
+	lua_pop(L, 1);
 
 	GRT_LUA_STACKCHECK_END(L);
 }
 
-int lexp::LExp_VSceneGraph::_luafunc_ctor(lua_State* L)
+void* lexp::LExp_VSceneGraph::_lexp_class_ctor(lua_State* L)
 {
-	VSceneGraph* nobj = new VSceneGraph();
-
-	try
-	{
-		int c = lua_gettop(L);
-
-		// obj["_LEXP_FIELD_NATIVE_OBJ"] = nobj
-		lua_pushinteger(L, (lua_Integer)nobj);
-		lua_setfield(L, -2, lexp::_LEXP_FIELD_NATIVE_OBJ);	
-
-
-	}
-	catch (const std::exception & ex)
-	{
-		delete nobj;
-	}
-
-	
-	return 0;
+	return new VSceneGraph();
 }
 
+void lexp::LExp_VSceneGraph::_lexp_class_gc(lua_State* L, void* native_obj)
+{
+	delete (VSceneGraph*)native_obj;
+}
 

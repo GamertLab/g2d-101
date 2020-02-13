@@ -23,7 +23,11 @@ void luart::init_runtime()
 
 void luart::uninit_runtime()
 {
-	lua_close(global_state);
+	if (global_state)
+	{
+		lua_close(global_state);
+		global_state = nullptr;
+	}
 }
 
 
